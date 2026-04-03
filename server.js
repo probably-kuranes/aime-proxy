@@ -12,17 +12,10 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/', function(req, res) {
-  res.json({ ok: true, service: 'AiME proxy' });
-});
-
-app.get('/health', function(req, res) {
-  res.json({ ok: true });
-});
-
 app.post('/roll', function(req, res) {
   var webhook = process.env.DISCORD_WEBHOOK;
   if (!webhook) return res.status(500).json({ error: 'Webhook not configured' });
+
   fetch(webhook, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,7 +25,12 @@ app.post('/roll', function(req, res) {
   .catch(function(e) { res.status(500).json({ error: e.message }); });
 });
 
-var PORT = parseInt(process.env.PORT) || 3000;
-app.listen(PORT, '0.0.0.0', function() {
-  console.log('AiME proxy running on port ' + PORT);
+app.get('/health', function(req, res) { res.json({ ok: true }); });
+
+var server = app.listen(process.env.PORT || 3000, '0.0.0.0', function() {
+  console.log('AiME proxy running on port ' + (process.env.PORT || 3000));
+});
+
+process.on('SIGTERM', function() {
+  server.close(function() { process.exit(0); });
 });
