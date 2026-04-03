@@ -25,6 +25,7 @@ app.post('/roll', function(req, res) {
   .catch(function(e) { res.status(500).json({ error: e.message }); });
 });
 
+app.get('/', function(req, res) { res.json({ ok: true }); });
 app.get('/health', function(req, res) { res.json({ ok: true }); });
 
 var server = app.listen(process.env.PORT || 3000, '0.0.0.0', function() {
